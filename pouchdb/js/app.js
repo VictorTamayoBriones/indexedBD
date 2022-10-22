@@ -11,6 +11,10 @@
   var db = new Pouch('todos');
   var remoteCouch = false;
   var cookie;
+  db.changes({
+    since: 'now',
+    live: true
+  }).on('change', showTodos);
 
   db.info(function(err, info) {
     db.changes({since: info.update_seq, onChange: showTodos, continuous: true});
@@ -32,7 +36,7 @@
 
   // Show the current list of todos by reading them from the database
   function showTodos() {
-    db.allDocs({include_docs: true}, function(err, doc) {
+    db.allDocs({include_docs: true, descending: true}, function(err, doc) {
       redrawTodosUI(doc.rows);
     });
   }
