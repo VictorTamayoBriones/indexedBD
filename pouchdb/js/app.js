@@ -11,10 +11,10 @@
   var db = new Pouch('todos');
   var remoteCouch = false;
   var cookie;
-  db.changes({
+  /*db.changes({
     since: 'now',
     live: true
-  }).on('change', showTodos);
+  }).on('change', showTodos);*/
 
   db.info(function(err, info) {
     db.changes({since: info.update_seq, onChange: showTodos, continuous: true});
@@ -22,6 +22,7 @@
 
   // We have to create a new todo document and enter it in the database
   function addTodo(text) {
+    if(trimmedText.length == 0) return;
     var todo = {
       _id: new Date().toISOString(),
       title: text,
@@ -42,6 +43,8 @@
   }
 
   function checkboxChanged(todo, event) {
+    console.log(todo);
+    console.log(event);
     todo.completed = event.target.checked;
     db.put(todo);
   }
